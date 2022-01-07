@@ -7,7 +7,9 @@ Questa è una traduzione italiana di alcuni materiali di documentazione di Pytho
 
 * La PEP 8, ovvero la guida di stile per il codice Python.
 
-Potete leggere la traduzione, in formato Html, Pdf o Epub, su ReadTheDocs.La traduzione è mantenuta in sicrono con gli aggiornamenti e le correzioni apportate agli originali. 
+Potete leggere la traduzione, in formato Html, Pdf o Epub, su ReadTheDocs: https://pymisc-it.readthedocs.io
+
+La traduzione è mantenuta in sicrono con gli aggiornamenti e le correzioni apportate agli originali. 
 
 Copyright dell'originale: 2001-2022 Python Software Foundation. All rights reserved.
 
