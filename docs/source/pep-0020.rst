@@ -1,0 +1,59 @@
+Lo Zen di Python (PEP 20)
+=========================
+
+- Autore: Tim Peters
+- Data di creazione: 19 agosto 2004
+- Traduzione aggiornata al: `21 febbraio 2020 <https://github.com/python/peps/commits/main/pep-0020.txt>`_
+
+Abstract
+--------
+
+Tim Peters, pythonista della prima ora, ha distillato i principi 
+ispiratori del BDFL per il design di Python in 20 aforismi, solo 
+19 dei quali sono stati trascritti. 
+
+Lo Zen di Python
+----------------
+
+.. code-block:: none
+
+    Bello è meglio di brutto.
+    Esplicito è meglio di implicito. 
+    Semplice è meglio di complesso. 
+    Complesso è meglio di complicato.
+    Piano è meglio di annidato.
+    Rado è meglio di denso.
+    La leggibilità conta.
+    I casi speciali non lo sono abbastanza da infrangere le regole.
+    Anche se la praticità batte la purezza.
+    Gli errori non dovrebbero mai passare sotto silenzio.
+    Se non quando sono silenziati esplicitamente.
+    Di fronte all'ambiguità, resisti alla tentazione di indovinare.
+    Dovrebbe esserci uno e un solo modo di fare le cose.
+    Anche se potrebbe non essere subito ovvio, se non sei olandese.
+    Ora è meglio di mai. 
+    Anche se mai è spesso meglio di *proprio* ora. 
+    Se l'implementazione è difficile da spiegare, è una cattiva idea.
+    Se l'implementazione è facile da spiegare, potrebbe essere una buona idea.
+    Gli spazi dei nomi sono una gran trovata: usiamoli di più!
+
+Sorpresa
+--------
+
+::
+
+  >>> import this
+
+
+Riferimenti
+-----------
+
+* Pubblicato per la prima volta su comp.lang.python/python-list@python.org 
+  in un thread dal titolo "La Via di Python" 
+  https://groups.google.com/d/msg/comp.lang.python/B_VxeTBClM0/L8W9KlsiriUJ
+
+
+Copyright
+---------
+
+Questo documento è di pubblico dominio.

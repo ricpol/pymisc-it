@@ -1,0 +1,1477 @@
+Guida di stile per il codice Python (PEP 8)
+===========================================
+
+- Autore: Guido van Rossum, Barry Warsaw, Nick Coghlan
+- Data di creazione: 5 luglio 2001
+- Traduzione aggiornata al: `2 settembre 2021 <https://github.com/python/peps/commits/main/pep-0008.txt>`_
+
+Introduzione
+------------
+
+Questo documento contiene le convenzioni di stile per il codice della 
+libreria standard della distribuzione principale di Python. Si veda 
+anche la PEP informativa complementare che descrive le linee guida 
+per il codice C dell'implementazione in C di Python [1]_.
+
+Questo documento e la PEP 257 (convenzioni per le docstring) sono 
+stati adattati da un originale saggio di Guido sullo stile del codice 
+Python, con alcune aggiunte dalla guida di stile di Barry [2]_.
+
+Questa guida di stile evolve nel tempo, man mano che emergono nuove 
+convenzioni e quelle vecchie sono superate dai cambiamenti nel 
+linguaggio stesso. 
+
+Molti progetti hanno le loro guide di stile interne. In caso di conflitti, 
+tali linee guida specifiche hanno la precedenza, per quei progetti.
+
+Una consistenza insensata è l'ossessione delle menti piccine. 
+-------------------------------------------------------------
+
+Una delle intuizioni fondamentali di Guido è che il codice viene letto 
+molto più spesso di quanto venga scritto. Queste linee guida sono intese 
+a migliorare la leggibilità del codice e a renderlo consistente lungo la 
+vasta gamma del codice Python circolante. Come dice la PEP 20, "la 
+leggibilità conta".
+
+Una guida di stile punta alla consistenza. E la consistenza con questa 
+guida di stile è importante. La consistenza all'interno di un progetto 
+è ancora più importante. La consistenza all'interno di un modulo o di 
+una funzione è la cosa più importante in assoluto. 
+
+Tuttavia, dovete capire quando non essere consistenti. A volte 
+le raccomandazioni delle guide di stile, semplicemente, non si possono 
+applicare. Quando siete in dubbio, usate il buon senso. Guardate altri 
+esempi, e decidete che cosa si presenta meglio. E non esitate a chiedere!
+
+In particolare: non rompete la retro-compatibilità solo per uniformarvi 
+a questa PEP!
+
+Alcune altre buone ragioni per ignorare una particolare indicazione:
+
+1. Quando applicarla renderebbe il codice meno leggibile, anche per 
+   chi è abituato a leggere codice che si conforma a questa PEP. 
+
+2. Per essere consistente con il codice circostante che già contravviene 
+   all'indicazione (magari per ragioni storiche); anche se questa 
+   potrebbe invece essere una buona ragione per ripulire i pasticci 
+   fatti dagli altri (in vero stile "extreme programming").
+
+3. Perché il codice è precedente all'introduzione di quella indicazione, 
+   e non c'è una ragione diversa per modificarlo.
+
+4. Quando il codice deve restare compatibile con una vecchia versione di 
+   Python che non supporta la *feature* raccomandata dalla guida di stile. 
+
+Layout del codice
+-----------------
+
+Rientri
+^^^^^^^
+
+Usate 4 spazi per ciascun livello di rientro. 
+
+Le linee multi-riga dovrebbero allineare gli elementi inclusi  
+verticalmente, usando l'unione di riga implicita tra le parentesi 
+di Python, oppure con un *rientro sporgente* [#fn-hi]_. Quando usate 
+il rientro sporgente, considerate questo: non dovrebbero esserci 
+argomenti nella prima riga, e il rientro successivo dovrebbe servire 
+a distinguere bene che si tratta una linea multi-riga::
+
+    # Giusto:
+
+    # Allineato con una spaziatura iniziale.
+    foo = long_function_name(var_one, var_two,
+                             var_three, var_four)
+
+    # 4 spazi in più (un rientro extra) 
+    # per distinguere gli argomenti dal resto.
+    def long_function_name(
+            var_one, var_two, var_three,
+            var_four):
+        print(var_one)
+
+    # Il rientro sporgente dovrebbe aggiungere un livello.
+    foo = long_function_name(
+        var_one, var_two,
+        var_three, var_four)
+
+::
+
+    # Sbagliato:
+
+    # Niente argomenti sulla prima riga 
+    # se non si usa l'allineamento verticale.
+    foo = long_function_name(var_one, var_two,
+        var_three, var_four)
+
+    # Occorre più rientro, altrimenti non si distingue dal resto.
+    def long_function_name(
+        var_one, var_two, var_three,
+        var_four):
+        print(var_one)
+
+La regola "4 spazi, un rientro" è opzionale per le linee multi-riga. 
+
+Facoltativo::
+
+    # Il rientro sporgente *può* essere diverso da 4 spazi.
+    foo = long_function_name(
+      var_one, var_two,
+      var_three, var_four)
+
+.. _`multiline if-statements`:
+
+Quando la condizione di un'istruzione ``if`` è così lunga da dover essere 
+scritta su più righe, vale la pena di notare che l'unione di una parola 
+chiave di due caratteri (come ``if``), più uno spazio, più la parentesi 
+aperta crea un rientro naturale di 4 spazi per le righe successive della 
+condizione multi-riga. Questo può portare a un bisticcio visivo con 
+le istruzioni rientrate successive, dentro la ``if``, che dovrebbe essere 
+rientrare appunto di 4 spazi. Questa PEP non ha una posizione esplicita 
+su come (o se) bisognerebbe distinguere ulteriormente le righe della 
+condizione da quelle rientrate successive. Soluzioni accettabili, ma non 
+le uniche, in casi del genere sono::
+
+    # Nessun rientro extra.
+    if (this_is_one_thing and
+        that_is_another_thing):
+        do_something()
+
+    # Aggiungere un commento, che aiuta a separare negli 
+    # editor con la sintassi colorata.
+    if (this_is_one_thing and
+        that_is_another_thing):
+        # Siccome entrambe le condizioni sono vere, bla bla bla...
+        do_something()
+
+    # Aggiungere un rientro extra nella continuazione della condizione.
+    if (this_is_one_thing
+            and that_is_another_thing):
+        do_something()
+
+(Inoltre, si veda sotto la discussione se andare a capo prima o dopo 
+gli operatori binari.)
+
+La chiusura di parentesi/virgolette in un costrutto multi-riga può essere 
+allineata al primo carattere dell'ultima riga, per esempio ::
+
+    my_list = [
+        1, 2, 3,
+        4, 5, 6,
+        ]
+    result = some_function_that_takes_arguments(
+        'a', 'b', 'c',
+        'd', 'e', 'f',
+        )
+
+oppure al primo carattere della riga iniziale del costrutto, per esempio ::
+
+    my_list = [
+        1, 2, 3,
+        4, 5, 6,
+    ]
+    result = some_function_that_takes_arguments(
+        'a', 'b', 'c',
+        'd', 'e', 'f',
+    )
+
+Spazi o tabulazioni?
+^^^^^^^^^^^^^^^^^^^^
+
+Gli spazi sono il modo preferenziale per creare i rientri.
+
+Si dovrebbero usare le tabulazioni solo per consistenza con il codice 
+che è già rientrato con queste.
+
+Python non permette di mescolare spazi e tabulazioni per i rientri.
+
+Lunghezza massima della riga
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Limitate tutte le righe a un massimo di 79 caratteri.
+
+Per i blocchi di testo che scorrono con minori limiti strutturali 
+(come le docstring e i commenti), la riga non dovrebbe superare i 
+72 caratteri. 
+
+Limitare la larghezza richiesta per la finestra dell'editor fa sì che 
+si possano aprire più file uno accanto all'altro, e funziona bene 
+con gli strumenti di revisione del codice che presentano due versioni 
+in colonne adiacenti. 
+
+L'a-capo automatico, in molti strumenti, altera la struttura visiva 
+del codice e lo rende più difficile da capire. Questi limiti sono scelti 
+così da evitare l'a-capo automatico negli editor con una larghezza fissa 
+di 80 caratteri, anche se l'editor inserisce un segno speciale nelle 
+righe che vanno a capo. Alcuni strumenti con interfaccia web potrebbero 
+poi non avere neppure un a-capo automatico. 
+
+Alcuni gruppi di lavoro hanno una forte preferenza per una riga più lunga. 
+Se il codice è mantenuto esclusivamente o primariamente da sviluppatori 
+che si accordano tra loro nel merito, va bene aumentare la lunghezza 
+della riga fino a un massimo di 99 caratteri; purché i commenti e le 
+docstring restino nel limite dei 72 caratteri. 
+
+La libreria standard di Python è conservativa e richiede di limitare la 
+riga a 79 caratteri (e commenti e docstring a 72).
+
+Il metodo preferenziale di mandare a capo le righe troppo lunghe è di 
+usare la continuazione di riga implicita di Python dentro le parentesi 
+e le virgolette. Si possono spezzare in questo modo le righe, mettendo 
+le espressioni tra parentesi. Questo metodo è preferibile all'uso 
+della barra rovesciata per la continuazione di riga. 
+
+La barra rovesciata torna comunque utile, talvolta. Per esempio, una 
+istruzione ``with`` lunga non può usare la continuazione implicita, 
+quindi la barra rovesciata è accettabile::
+
+    with open('/path/to/some/file/you/want/to/read') as file_1, \
+         open('/path/to/some/file/being/written', 'w') as file_2:
+        file_2.write(file_1.read())
+
+Si veda la discussione precedente sugli 
+:ref:`if multi-riga<multiline if-statements>` per altre considerazioni 
+sui rientri di queste istruzioni ``with`` multi-riga.
+
+Un altro caso del genere sono le istruzioni ``assert``.
+
+Accertatevi di rientrare in modo appropriato queste righe spezzate. 
+
+Andare a capo prima o dopo un operatore binario?
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Per molti anni, lo stile raccomandato era di andare a capo *dopo* gli 
+operatori binari. Ma questo compromette la leggibilità, in due modi: 
+gli operatori finiscono sparpagliati su diverse colonne dello schermo, 
+e ogni operatore resta lontano dal suo operando, nella riga precedente. 
+Qui, l'occhio fatica a capire che cosa è sottratto e che cosa aggiunto::
+
+    # Sbagliato:
+    # gli operatori sono lontani dai loro operandi
+    income = (gross_wages +
+              taxable_interest +
+              (dividends - qualified_dividends) -
+              ira_deduction -
+              student_loan_interest)
+
+Per ovviare a questo problema di leggibilità, i matematici e i loro 
+editori seguono la convenzione opposta. Donald Knuth spiega la regola 
+consueta nella sua serie *Computers and Typesetting*: "Sebbene le 
+formule all'interno di un paragrafo vadano sempre a capo dopo 
+gli operatori binari e le relazioni, le formule a se stanti vanno sempre 
+a capo prima degli operatori binari" [3]_.
+
+Seguire la tradizione dei matematici di solito rende il codice più 
+leggibile::
+
+    # Giusto:
+    # così è facile associare operatori e operandi
+    income = (gross_wages
+              + taxable_interest
+              + (dividends - qualified_dividends)
+              - ira_deduction
+              - student_loan_interest)
+
+Nel codice Python è ammesso andare a capo prima o dopo un operatore 
+binario, fintanto che si usi una convenzione locale uniforme. 
+Per il codice nuovo è preferibile usare lo stile di Knuth. 
+
+Righe vuote
+^^^^^^^^^^^
+
+Mettete due righe vuote tra le definizioni di funzioni *top-level* 
+e di classi. 
+
+Dentro una classe, le definizioni dei metodi sono intervallate da 
+una singola riga vuota.
+
+Righe vuote ulteriori si possono usare (con parsimonia) per separare 
+gruppi di funzioni collegate. Va bene omettere le righe vuote in un 
+gruppo di definizioni a riga singola collegate (per esempio, un gruppo 
+di implementazioni vuote).
+
+Usate righe vuote dentro le funzioni, con parsimonia, per indicare 
+sezionamenti logici.
+
+Python accetta il carattere di *form feed* "control-L" (^L) come 
+spazio bianco; molti strumenti trattano questo carattere come separatore 
+di pagina: potreste quindi usarlo per separare sezioni diverse del 
+vostro file. Si noti che alcuni editor e visualizzatori di codice 
+con interfaccia web potrebbero non riconoscere il "control-L" come 
+*form feed* e visualizzare un altro glifo al suo posto. 
+
+Encoding del file di codice
+^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Il codice di una distribuzione Python dovrebbe sempre usare UTF-8, e non 
+dovrebbe avere una dichiarazione di encoding. 
+
+Nella libreria standard, il codice non-UTF-8 dovrebbe servire solo a 
+scopo di test. Usate i caratteri non-ASCII con parsimonia, preferibilmente 
+solo per scrivere luoghi e nomi di persona. Se usate caratteri non-ASCII 
+come dati, evitate caratteri Unicode strani come  z̯̯͡a̧͎̺l̡͓̫g̹̲o̡̼̘  e i marcatori 
+di *byte order*.
+
+Tutti gli identificatori nella libreria standard di Python devono essere 
+soltanto in ASCII, e dovrebbero usare parole inglesi ovunque possibile 
+(in molti casi, si possono usare abbreviazioni e termini tecnici 
+non inglesi).
+
+I progetti open source con una utenza globale sono incoraggiati a usare 
+la stessa regola.
+
+Importazioni
+^^^^^^^^^^^^
+
+- Ogni import dovrebbe andare in una riga separata::
+
+       # Giusto:
+       import os
+       import sys
+
+  ::
+
+       # Sbagliato:
+       import sys, os
+
+  Questo però può andar bene::
+
+      # Giusto:
+      from subprocess import Popen, PIPE
+
+- Gli import vanno sempre messi all'inizio del file, appena sotto qualsiasi 
+  commento e docstring del modulo, e prima delle costanti e variabili 
+  globali. 
+
+  Gli import dovrebbero essere raggruppati in quest'ordine:
+  
+  1. Import dalla libreria standard.
+  2. Import dai necessari pacchetti esterni.
+  3. Import locali specifici dall'applicazione/libreria.
+
+  Dovreste inserire una riga vuota tra ciascun gruppo di import.
+
+- Gli import assoluti sono raccomandati, perché di solito sono più leggibili 
+  e tendono a comportarsi meglio (o almeno a restituire messaggi di 
+  errore più chiari) quando il sistema degli import non è configurato 
+  correttamente (per esempio quando una directory dentro un package 
+  finisce dentro la ``sys.path``)::
+
+      import mypkg.sibling
+      from mypkg import sibling
+      from mypkg.sibling import example
+
+  Comunque, gli import relativi espliciti sono un'alternativa accettabile, 
+  specie quando si ha a che fare con layout di package complessi, dove 
+  un import assoluto sarebbe eccessivamente lungo::
+
+      from . import sibling
+      from .sibling import example
+
+  Il codice della libreria standard dovrebbe sempre evitare i layout 
+  di package troppo complessi, e sempre usare gli import assoluti. 
+
+- Quando si importa una classe da un modulo che la contiene, di solito 
+  questa forma va bene::
+
+      from myclass import MyClass
+      from foo.bar.yourclass import YourClass
+
+  Se in questo modo si creano conflitti con i nomi di classi locali, 
+  allora occorre importare esplicitamente ::
+
+      import myclass
+      import foo.bar.yourclass
+
+  e quindi usare ``myclass.MyClass`` e ``foo.bar.yourclass.YourClass``.
+
+- Vanno evitati gli import con l'asterisco (``from <module> import *``), 
+  perché poi non è più chiaro quali nomi sono presenti nel namespace, 
+  confondendo sia i lettori sia molti *tool* automatizzati. C'è solo un 
+  possibile uso di questi import che può essere tollerato: quando 
+  vogliamo ripubblicare un'interfaccia interna come parte di una API 
+  pubblica (per esempio, sovrascrivere una implementazione in puro 
+  Python con le definizioni di un modulo "accelerato", quando non è noto 
+  in anticipo quali definizioni potrebbero essere sovrascritte).
+  
+  Quando si ripubblicano in questo modo dei nomi, si applicano comunque 
+  le linee guida qui sotto, sulle interfacce pubbliche e non-pubbliche. 
+
+Nomi *dunder* a livello di modulo
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+I nomi *dunder* del modulo (ovvero, i nomi con due *underscore* 
+prima e dopo) come ``__all__``, ``__author__``, ``__version__``,
+etc. dovrebbero essere collocati dopo la docstring del modulo, ma 
+prima di ogni import, *tranne* gli import ``from __future__``. 
+Python prescrive che questi ultimi siano collocati prima di qualsiasi 
+altro codice, a eccezione della docstring::
+
+    """Questo è un modulo di esempio.
+
+    Questo modulo fa delle cose.
+    """
+
+    from __future__ import barry_as_FLUFL
+
+    __all__ = ['a', 'b', 'c']
+    __version__ = '0.1'
+    __author__ = 'Cardinal Biggles'
+
+    import os
+    import sys
+
+Apici per le stringhe
+---------------------
+
+In Python, è la stessa cosa racchiudere le stringhe tra apici 
+semplici o doppi. Questa PEP non fa alcuna raccomandazione al riguardo. 
+Scegliete uno stile e attenetevi a quello. Tuttavia, quando una stringa 
+contiene a sua volta apici singoli o doppi, usate il tipo che consente 
+di evitare le barre rovesciate nella stringa: migliora la leggibilità. 
+
+Per le stringhe con tripli apici, usate sempre gli apici doppi 
+``"""..."""`` per conformità con le convenzioni sulle docstring 
+della PEP 257.
+
+Spazi nelle espressioni e nelle istruzioni
+------------------------------------------
+
+Piccole fissazioni
+^^^^^^^^^^^^^^^^^^
+
+Evitate spazi spuri in queste situazioni:
+
+- Direttamente dentro le parentesi e le virgolette::
+
+     # Giusto:
+     spam(ham[1], {eggs: 2})
+
+  ::
+
+    # Sbagliato:
+    spam( ham[ 1 ], { eggs: 2 } )
+
+- Tra la virgola finale e la parentesi chiusa che segue::
+
+      # Giusto:
+      foo = (0,)
+
+  ::
+
+      # Sbagliato:
+      bar = (0, )
+
+- Subito prima di una virgola, punto e virgola, due punti::
+
+      # Giusto:
+      if x == 4: print x, y; x, y = y, x
+
+  ::
+
+      # Sbagliato:
+      if x == 4 : print x , y ; x , y = y , x
+
+- Tuttavia, nella notazione per il sezionamento, il due-punti conta 
+  come un operatore binario e dovrebbe avere lo stesso spazio da 
+  entrambi i lati (lo si tratta come l'operatore con la precedenza 
+  più bassa). Nella notazione estesa, entrambi i due-punti dovrebbero 
+  avere gli stessi spazi a destra e a sinistra. Eccezione: se si omette 
+  il parametro del sezionamento, allora non ci vuole lo spazio::
+
+      # Giusto:
+      ham[1:9], ham[1:9:3], ham[:9:3], ham[1::3], ham[1:9:]
+      ham[lower:upper], ham[lower:upper:], ham[lower::step]
+      ham[lower+offset : upper+offset]
+      ham[: upper_fn(x) : step_fn(x)], ham[:: step_fn(x)]
+      ham[lower + offset : upper + offset]
+
+  ::
+
+      # Sbagliato:
+      ham[lower + offset:upper + offset]
+      ham[1: 9], ham[1 :9], ham[1:9 :3]
+      ham[lower : : upper]
+      ham[ : upper]
+
+- Subito prima della parentesi aperta che introduce la lista degli 
+  argomenti nella chiamata di funzione::
+
+      # Giusto:
+      spam(1)
+
+  ::
+
+      # Sbagliato:
+      spam (1)
+
+- Subito prima della parentesi aperta che inizia un indice o un 
+  sezionamento::
+
+      # Giusto:
+      dct['key'] = lst[index]
+
+  ::
+
+      # Sbagliato:
+      dct ['key'] = lst [index]
+
+- Più di uno spazio intorno a un operatore di assegnamento (o altro), 
+  per creare un allineamento::
+
+      # Giusto:
+      x = 1
+      y = 2
+      long_variable = 3
+
+  ::
+
+      # Sbagliato:
+      x             = 1
+      y             = 2
+      long_variable = 3
+
+Altre raccomandazioni
+^^^^^^^^^^^^^^^^^^^^^
+
+- Evitate gli spazi finali, ovunque. Siccome sono invisibili, 
+  potrebbero confondere: per es., una barra rovesciata seguita da 
+  uno spazio e un a-capo *non conta* come un segno di continuazione 
+  di riga. Alcuni editor scartano gli spazi finali e molti progetti 
+  (tra cui lo stesso CPython) hanno degli *hook* di *pre-commit* che 
+  li eliminano. 
+
+- Mettere sempre un singolo spazio prima e dopo questi operatori 
+  binari: di assegnamento (``=``), assegnamento aumentato (``+=``, 
+  ``-=`` etc.), confronto (``==``, ``<``, ``>``, ``!=``, ``<>``, ``<=``,
+  ``>=``, ``in``, ``not in``, ``is``, ``is not``), booleani (``and``,
+  ``or``, ``not``).
+
+- Se usate operatori con diversa priorità, considerate la possibilità 
+  di aggiungere uno spazio intorno a quelli con la priorità più bassa. 
+  Usate il vostro giudizio: comunque, non usate mai più di uno spazio 
+  e mantenete sempre lo stesso spazio da entrambi i lati di un operatore 
+  binario::
+
+      # Giusto:
+      i = i + 1
+      submitted += 1
+      x = x*2 - 1
+      hypot2 = x*x + y*y
+      c = (a+b) * (a-b)
+
+  ::
+
+      # Sbagliato:
+      i=i+1
+      submitted +=1
+      x = x * 2 - 1
+      hypot2 = x * x + y * y
+      c = (a + b) * (a - b)
+
+- Le annotazioni di funzione dovrebbero seguire le normali regole per 
+  i due-punti e avere sempre dello spazio intorno alla freccia ``->``, 
+  se presente. Si veda sotto per altre informazioni sulle 
+  :ref:`annotazioni di funzione<function_annotations>`::
+
+      # Giusto:
+      def munge(input: AnyStr): ...
+      def munge() -> PosInt: ...
+
+  ::
+
+      # Sbagliato:
+      def munge(input:AnyStr): ...
+      def munge()->PosInt: ...
+
+- Non mettete uno spazio intorno al segno ``=`` quando è usato per
+  indicare un argomento keyword, o un valore di default per un parametro 
+  *non annotato*::
+
+      # Giusto:
+      def complex(real, imag=0.0):
+          return magic(r=real, i=imag)
+
+  ::
+
+      # Sbagliato:
+      def complex(real, imag = 0.0):
+          return magic(r = real, i = imag)
+
+  Quando unite un'annotazione dell'argomento con un valore di default, 
+  invece, usate uno spazio intorno al segno ``=``::
+
+      # Giusto:
+      def munge(sep: AnyStr = None): ...
+      def munge(input: AnyStr, sep: AnyStr = None, limit=1000): ...
+
+  ::
+
+      # Sbagliato:
+      def munge(input: AnyStr=None): ...
+      def munge(input: AnyStr, limit = 1000): ...
+
+- Le istruzioni composte (più di una istruzione sulla stessa riga) sono 
+  in genere scoraggiate::
+
+      # Giusto:
+      if foo == 'blah':
+          do_blah_thing()
+      do_one()
+      do_two()
+      do_three()
+
+  Meglio di no::
+
+      # Sbagliato:
+      if foo == 'blah': do_blah_thing()
+      do_one(); do_two(); do_three()
+
+- Anche se a volte va bene mettere sulla stessa riga un if/for/while corti, 
+  non fatelo mai quando l'istruzione ha più di un blocco. Inoltre 
+  evitate di dover mandare a capo la riga perché è diventata troppo lunga!
+
+  Meglio di no::
+
+      # Sbagliato:
+      if foo == 'blah': do_blah_thing()
+      for x in lst: total += x
+      while t < 10: t = delay()
+
+  Decisamente no::
+
+      # Sbagliato:
+      if foo == 'blah': do_blah_thing()
+      else: do_non_blah_thing()
+
+      try: something()
+      finally: cleanup()
+
+      do_one(); do_two(); do_three(long, argument,
+                                   list, like, this)
+
+      if foo == 'blah': one(); two(); three()
+
+
+Quando mettere la virgola finale
+--------------------------------
+
+La virgola finale di solito è opzionale, tranne che per una tupla 
+di un solo elemento, dove invece è obbligatoria. In questo caso, per 
+chiarezza, è raccomandabile usare anche le parentesi, per quando 
+tecnicamente ridondanti::
+
+    # Giusto:
+    FILES = ('setup.cfg',)
+
+::
+
+    # Sbagliato:
+    FILES = 'setup.cfg',
+
+Quando la virgola finale è ridondante, può essere comunque utile se 
+si usa un sistema di controllo di versione, quando una lista di 
+valori, argomenti o oggetti importati cambierà verosimilmente nel 
+tempo. In questi casi di solito si mette ciascun valore in una riga 
+a sé, sempre con la virgola finale, e si chiude la parentesi/virgolette 
+nella riga successiva. Tuttavia la virgola finale non ha senso quando è 
+nella stessa riga del delimitatore di chiusura (tranne che nel caso 
+già visto della tupla di un solo elemento)::
+
+    # Giusto:
+    FILES = [
+        'setup.cfg',
+        'tox.ini',
+        ]
+    initialize(FILES,
+               error=True,
+               )
+
+::
+
+    # Sbagliato:
+    FILES = ['setup.cfg', 'tox.ini',]
+    initialize(FILES, error=True,)
+
+Commenti
+--------
+
+Un commento che contraddice il codice è peggio di nessun commento. 
+Deve sempre essere una priorità mantenere i commenti aggiornati quando 
+il codice cambia!
+
+I commenti dovrebbero essere delle frasi complete. Iniziate con la 
+maiuscola, a meno che la prima parola non sia un identificatore che inizia 
+con la minuscola (mai alterare come è scritto un identificatore!).
+
+I blocchi di commento di solito sono costituiti da uno o più paragrafi 
+di frasi complete, con ciascuna frase che termina con un punto. 
+
+Dovreste usare due spazi dopo un punto di fine frase in un commento 
+che ha più di una frase, tranne che dopo la frase finale. 
+
+Assicuratevi che i vostri commenti siano chiari e facilmente comprensibili 
+a chi legge nella lingua che state usando. 
+
+Programmatori Python da Paesi di lingua non-Inglese: per cortesia 
+scrivete i commenti in Inglese, a meno che non siate sicuri al 120% che 
+il vostro codice non sarà mai letto da persone che non parlano la vostra 
+lingua. 
+
+Blocchi di commenti
+^^^^^^^^^^^^^^^^^^^
+
+I blocchi di commenti di solito si riferiscono a parte del codice che 
+segue (o anche tutto), e hanno lo stesso livello di rientro del codice. 
+Ciascuna riga di un blocco di commenti inizia con un ``#`` seguito da uno 
+spazio (a meno che non vi sia testo rientrato dentro al commento).
+
+I paragrafi di un blocco sono separati da una riga che contiene 
+un singolo ``#``.
+
+Commenti sulla riga
+^^^^^^^^^^^^^^^^^^^
+
+Usateli con parsimonia. 
+
+Un commento sulla riga si mette appunto sulla stessa riga dell'istruzione 
+a cui si riferisce. Questi commenti dovrebbero stare separati da almeno 
+due spazi dall'istruzione. Dovrebbero iniziare con ``#`` e uno spazio. 
+
+I commenti sulla riga sono inutili, e in effetti distraggono, se affermano 
+cose ovvie. Non fate questo::
+
+    x = x + 1                 # Incrementa x
+
+A volte invece questo è utile::
+
+    x = x + 1                 # Compensa per il bordo
+
+Stringhe di documentazione
+^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Le convenzioni per la scrittura di buone stringhe di documentazione 
+(dette anche "docstring") sono riportate nella PEP 257.
+
+- Scrivete la docstring per tutti i moduli pubblici, le funzioni, 
+  le classi e i metodi. Le docstring non sono necessarie per i metodi 
+  non-pubblici, ma dovreste inserire un commento che dice a che cosa 
+  serve il metodo. Questo commento dovrebbe stare dopo la riga ``def``.
+
+- La PEP 257 descrive le buone pratiche per le docstring. Si noti che, 
+  punto importante, il ``"""`` conclusivo in una docstring multi-riga 
+  dovrebbe stare in una riga a sé::
+
+      """Restituisce un coso.
+
+      L'opzione opzionale cosa prima l'altro coso. 
+      """
+
+- Per le docstring su una riga singola, mantenete il ``"""`` 
+  di chiusura sulla stessa riga::
+
+      """Restituisce un pappagallo morto."""
+
+Convenzioni per i nomi
+----------------------
+
+Le convenzioni per i nomi della libreria standard sono un poco confuse, 
+quindi non riusciremo mai a essere completamente consistenti: ciò 
+nonostante, ecco le raccomandazioni aggiornate sugli standard per i 
+nomi. I nuovi moduli e package (compresi i framework di terze parti) 
+dovrebbero attenersi a questi standard, ma quando una libreria esistente 
+adotta uno stile diverso, è preferibile puntare alla coerenza interna. 
+
+Principio fondamentale
+^^^^^^^^^^^^^^^^^^^^^^
+
+I nomi che sono visibili all'utente come parte di una API pubblica 
+dovrebbero seguire una convenzione che riflette il loro uso, piuttosto 
+che la loro implementazione. 
+
+Convenzioni descrittive: stile per i nomi
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Ci sono molti stili diversi per i nomi. È importante riuscire a capire 
+quale stile è in uso, indipendentemente dal motivo per cui è usato. 
+
+È comune distinguere tra i seguenti stili:
+
+- ``b`` (una singola lettera minuscola)
+- ``B`` (una singola lettera maiuscola)
+- ``minuscolo``
+- ``minuscolo_con_underscore``
+- ``MAIUSCOLO``
+- ``MAISUCOLO_CON_UNDERSCORE``
+- ``InizialiMaiuscole`` (o *CapWords*, o *CamelCase*, così detto per via 
+  dell'aspetto a gobba [4]_). Anche noto a volte come *StudlyCaps*.
+
+  Nota: quando un *CapWords* contiene un acronimo, mettete tutte le sue 
+  lettere in maiuscolo. "HTTPServerError" è meglio di "HttpServerError".
+- ``inizialiMiste`` (diverso dal precedente perché la prima lettera è 
+  minuscola!)
+- ``Iniziali_Maiuscole_Con_Underscore`` (brutto!)
+
+C'è poi lo stile di usare un breve prefisso unico per raggruppare nomi 
+dello stesso ambito. Questo non è molto usato in Python, ma lo menzioniamo 
+per completezza. Per esempio, la funzione ``os.stat()`` restituisce una 
+tupla i cui elementi tradizionalmente hanno dei nomi come ``st_mode``,
+``st_size``, ``st_mtime`` e così via. (Questo, per enfatizzare la 
+corrispondenza con i campi della *struct* della chiamata di sistema POSIX, 
+per aiutare i programmatori che vi sono abituati.)
+
+La libreria X11 fa uso di una X iniziale per tutte le sue funzioni 
+pubbliche. In Python di solito questo stile non si considera necessario, 
+perché i nomi degli attributi e dei metodi sono preceduti dal nome 
+dell'oggetto, e i nomi delle funzioni da quello del modulo. 
+
+Inoltre, sono riconosciute queste forme speciali che fanno uso di un 
+*underscore* iniziale o finale (possono in genere essere combinate 
+con qualsiasi altra convenzione per i nomi):
+
+- ``_underscore_singolo_iniziale``: suggerisce un nome "a uso interno".
+  Per es., ``from M import *`` non importa i nomi che iniziano con un 
+  *underscore*.
+
+- ``underscore_singolo_finale_``: si usa per convenzione per evitare 
+  conflitti con le parole riservate di Python, per es.::
+
+      tkinter.Toplevel(master, class_='ClassName')
+
+- ``__doppio_underscore_iniziale``: nel caso di un attributo della classe, 
+  invoca la manipolazione del nome (dentro la classe FooBar, ``__boo`` 
+  diventa ``_FooBar__boo``; vedi oltre).
+
+- ``__doppio_underscore_iniziale_e_finale__``: oggetti o attributi 
+  "magici" che vivono nello spazio dei nomi controllato dall'utente. 
+  Es. ``__init__``, ``__import__`` o ``__file__``. Non bisogna mai 
+  creare nomi di questo tipo; solo usarli come documentato. 
+
+Convenzioni prescrittive: regole per i nomi
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Nomi da evitare
+~~~~~~~~~~~~~~~
+
+Mai usare i caratteri "l" (elle minuscola), 'O' (o maiuscola), o "I" 
+(i maiuscola) in un nome di variabile con un singolo carattere. 
+
+In alcuni font, questi caratteri sono indistinguibili dai numeri 1 e 0. 
+Se dovete usare "l", usate piuttosto "L".
+
+Compatibilità con ASCII
+~~~~~~~~~~~~~~~~~~~~~~~
+
+Gli identificatori usati nella libreria standard devono essere compatibili 
+con ASCII, come detto nella 
+`PEP 3131 <https://www.python.org/dev/peps/pep-3131/#policy-specification>`_. 
+
+Nomi per moduli e package
+~~~~~~~~~~~~~~~~~~~~~~~~~
+
+I moduli dovrebbero avere nomi corti, in caratteri minuscoli. Per 
+migliorare la leggibilità si possono usare *underscore* in questi nomi. 
+I package dovrebbero anch'essi avere nomi corti in minuscolo, ma l'uso 
+di *underscore* qui è scoraggiato. 
+
+Quando un modulo estensione scritto in C o C++ è accompagnato da un 
+modulo Python che fornisce un'interfaccia di alto livello (per es. 
+più a oggetti), allora il modulo C/C++ ha un *underscore* iniziale 
+(es. ``_socket``).
+
+Nomi per le classi
+~~~~~~~~~~~~~~~~~~
+
+I nomi delle classi dovrebbero seguire la convenzione *CapWords*.
+
+Si può invece seguire la convenzione delle funzioni nel caso in cui 
+l'interfaccia sia documentata e usata principalmente come un *callable*.
+
+Si noti che esiste una convenzione separata per i nomi builtin: molti 
+di questi sono parole singole (o due parole attaccate), e la convenzione 
+*CapWords* è usata solo per i nomi delle eccezioni e le costanti builtin. 
+
+Nomi per le variabili di tipo
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+I nomi delle variabili di tipo introdotte nella PEP 484 dovrebbero di regola 
+usare *CapWords* e scegliere nomi corti: ``T``, ``AnyStr``, ``Num``. 
+Si raccomanda di aggiungere un suffisso ``_co`` o ``_contra`` alla 
+variabile, per dichiarare un comportamento rispettivamente covariante o 
+contravariante::
+
+    from typing import TypeVar
+
+    VT_co = TypeVar('VT_co', covariant=True)
+    KT_contra = TypeVar('KT_contra', contravariant=True)
+
+Nomi delle eccezioni
+~~~~~~~~~~~~~~~~~~~~
+
+Dal momento che le eccezioni dovrebbero essere classi, si applicano 
+le convenzioni per i nomi delle classi. Si dovrebbe tuttavia usare il 
+suffisso "Error" al nome delle eccezioni personalizzate (posto che 
+davvero l'eccezione sia un errore).
+
+Nomi per le variabili globali
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+(Si spera che queste variabili siano solo per l'uso interno del modulo.) 
+Valgono le stesse convenzioni delle funzioni.
+
+I moduli concepiti per essere usati con ``from M import *`` dovrebbero 
+servirsi del meccanismo di ``__all__`` per evitare l'esportazione di 
+questi valori globali, oppure usare la vecchia convenzione di un singolo 
+*underscore* di prefisso (cosa che potreste voler fare in ogni caso, 
+per indicare che questi nomi globali sono a solo uso interno nel modulo).
+
+Nomi di funzioni e variabili
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+I nomi di funzione dovrebbero essere in minuscolo, con le parole 
+separate da *underscore* al bisogno, per migliorare la leggibilità. 
+
+I nomi di variabile seguono la stessa regola. 
+
+Lo stile con le ``inizialiMiste`` è ammesso solo là dove sia già lo 
+stile prevalente (es., threading.py), per non rompere la 
+retro-compatibilità.
+
+Nomi per gli argomenti di funzioni e metodi
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Usate sempre ``self`` per il primo argomento di un metodo di istanza. 
+
+Usate sempre ``cls`` per il primo argomento di un metodo di classe.
+
+Se il nome di un argomento è in conflitto con una parola riservata, di 
+solito è meglio aggiungere un singolo *underscore* alla fine, piuttosto 
+che usare un'abbreviazione o scriverlo in modo volutamente alterato. 
+Quindi, ``class_`` è meglio di ``clss``. (Forse è meglio ancora evitare 
+del tutto questi conflitti ricorrendo a sinonimi.)
+
+Nomi per i metodi e le variabili di istanza
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Si usano le regole per i nomi delle funzioni: minuscoli, con le parole 
+separate da *underscore*, se necessario per migliorare la leggibilità.
+
+Mettete un *underscore* iniziale solo per i metodi non-pubblici e le 
+variabili di istanza. 
+
+Per evitare conflitti con le sotto-classi, mettete due *underscore* 
+iniziali per innescare le regole della manipolazione dei nomi di Python. 
+
+Python manipola questi nomi con il nome della classe: se la classe Foo 
+ha un attributo di nome ``__a``, questo non può essere raggiunto con 
+``Foo.__a``. (Un utente determinato potrebbe comunque accedervi chiamando 
+``Foo._Foo__a``.) In generale i nomi con doppio *underscore* iniziale 
+dovrebbero essere usati solo per evitare conflitti di nome degli 
+attributi, nelle classi progettate per essere derivate. 
+
+Nota: c'è una controversia sull'uso di questi __nomi (vedi sotto).
+
+Costanti
+~~~~~~~~
+
+Di solito le costanti sono definite a livello di modulo, e scritte 
+tutte in maiuscolo con *underscore* per separare le parole. Per esempio, 
+``MAX_OVERFLOW`` o ``TOTAL``.
+
+Progettare per l'ereditarietà
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Decidete sempre se un metodo della classe o una variabile di istanza 
+(in breve: gli "attributi") dovrebbe essere pubblico o non-pubblico. 
+Nel dubbio, scegliete non-pubblico: è più facile in seguito rendere 
+pubblico un attributo non-pubblico che l'inverso. 
+
+Gli attributi pubblici sono quelli che vi aspettate che verranno usati 
+da "clienti" casuali della vostra classe, e per i quali vi impegnate a 
+non rompere la retro-compatibilità. Gli attributi non-pubblici non sono 
+intesi per l'uso da terze parti; non vi impegnate in alcun modo a non 
+cambiare, o addirittura rimuovere, questi attributi. 
+
+Non usiamo qui il termine "privato", perché nessun attributo è davvero 
+privato in Python (a meno di molto lavoro, di solito inutile).
+
+Un altra categoria di attributi è quella delle "API delle sotto-classi" 
+(che in altri linguaggi spesso si chiamano "protetti"). Alcune classi 
+sono progettate per l'ereditarietà, sia per estendere sia per modificare 
+il comportamento della classe. Quando progettate una classe di questo tipo, 
+fate attenzione a decidere in modo esplicito quali attributi sono pubblici, 
+quali fanno parte della API delle sotto-classi, e quali sono davvero  
+usati solo dalla vostra classe-base. 
+
+Con tutto questo in mente, ecco le linee-guida di Python: 
+
+- Gli attributi pubblici non dovrebbero iniziare con *underscore*.
+
+- Se il nome di un attributo pubblico collide con una parola riservata, 
+  aggiungetevi un singolo *underscore* alla fine. Ciò è preferibile a 
+  un'abbreviazione o un'alterazione del nome. (Tuttavia, nonostante 
+  questa regola, "cls" è la forma da preferirsi per qualsiasi variabile 
+  o argomento che deve essere una classe; specialmente per il primo 
+  argomento di un metodo di classe.)
+
+  Nota 1: Anche per i metodi di classe, si vedano le raccomandazioni 
+  fatte sopra per i nomi degli argomenti. 
+
+- Per gli attributi che sono semplici dati pubblici, è meglio esporre 
+  direttamente il nome dell'attributo, senza complicati metodi 
+  accessori/mutatori. Se in futuro doveste accorgervi che un dato 
+  accessibile come attributo ha bisogno in realtà di espandersi in una 
+  funzione, tenete presente che Python offre una soluzione semplice per 
+  le aggiunte di questo tipo. In questi casi, usate le *property* per 
+  nascondere l'implementazione funzionale dietro la sintassi di un 
+  semplice accesso a un attributo. 
+
+  Nota 1: Cercate di non inserire dei side-effect in queste funzioni, 
+  anche se dei side-effect come l'uso di una cache in genere vanno bene.
+
+  Nota 2: Non usate le *property* per operazioni computazionalmente 
+  costose: la sintassi dell'attributo fa credere all'utente che l'accesso 
+  sia relativamente economico. 
+
+- Se la classe dovrà essere derivata, ma avete degli attributi che non 
+  volete siano usati dalle sotto-classi, date a questi un nome con 
+  un doppio *underscore* iniziale e nessun *underscore* finale. Questo 
+  innesca l'algoritmo della manipolazione dei nomi di Python, dove il 
+  nome della classe è unito a quello dell'attributo. Ciò aiuta a evitare 
+  collisioni, se la sotto-classe dovesse inavvertitamente contenere 
+  attributi con lo stesso nome. 
+
+  Nota 1: Si noti che il nome manipolato usa solo il nome della classe 
+  così com'è; quindi, se una sotto-classe sceglie di replicare sia il 
+  nome della classe sia quello dell'attributo, potreste comunque avere 
+  delle collisioni. 
+
+  Nota 2: La manipolazione dei nomi può rendere certe operazioni più 
+  complicate, per esempio il debugging e l'uso di ``__getattr__()``. 
+  Del resto l'algoritmo di manipolazione è ben documentato e facile da 
+  ricostruire a mano. 
+
+  Nota 3: Non a tutti piace la manipolazione dei nomi. Cercate di 
+  bilanciare la necessità di evitare collisioni accidentali di nomi, 
+  con il potenziale utilizzo da parte di utenti avanzati. 
+
+Interfacce pubbliche e interne
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Qualunque garanzia di retro-compatibilità si applica solo alle interfacce 
+pubbliche. Di conseguenza, è importante che gli utenti possano distinguere 
+bene tra interfacce pubbliche e interne.
+
+Le interfacce documentate si considerano pubbliche, a meno che la 
+documentazione non le dichiari esplicitamente come provvisorie, o interne, 
+esenti dalle normali garanzie di retro-compatibilità. Tutte le interfacce 
+non documentate sono da considerarsi interne. 
+
+Per supportare meglio l'introspezione, i moduli dovrebbero dichiarare in 
+modo esplicito i nomi delle loro API pubbliche usando l'attributo 
+``__all__``. Impostare ``__all__`` a una lista vuota vuol dire che il 
+modulo non ha un'interfaccia pubblica. 
+
+Anche in presenza di un ``__all__``, le interfacce interne (nomi di 
+package, moduli, classi, funzioni, attributi o altri) dovrebbero 
+comunque avere un singolo *underscore* iniziale.
+
+Inoltre, un'interfaccia è interna se lo spazio dei nomi circostante 
+(package, modulo o classe) è considerato interno. 
+
+I nomi importati si considerano sempre un dettaglio di implementazione. 
+Gli altri moduli non dovrebbero mai affidarsi a un accesso indiretto a 
+questi nomi, a meno che non siano esplicitamente documentati come parte 
+della API del modulo contenitore, come accade per ``os.path`` o il modulo 
+``__init__`` di un package che espone le funzionalità dei moduli interni.
+
+Raccomandazioni di programmazione
+---------------------------------
+
+- Non bisognerebbe scrivere codice che danneggia le altre implementazioni 
+  di Python (PyPy, Jython, IronPython, Cython, Psyco e così via).
+
+  Per esempio, non bisogna fare affidamento sull'implementazione efficiente 
+  delle concatenazioni di stringhe sul posto in CPython, in espressioni 
+  come ``a += b`` o ``a = a + b``. Questa è una ottimizzazione fragile 
+  anche in CPython (funziona solo per certi tipi), e non si trova proprio 
+  in tutte le implementazioni che non usano il conteggio dei riferimenti. 
+  Dove la performance conta, nella libreria, bisognerebbe usare invece 
+  ``''.join()``. Questo garantisce che la concatenazione avverrà in un 
+  tempo lineare su tutte le varie implementazioni di Python. 
+
+- I confronti con *singleton* come ``None`` dovrebbero avvenire sempre con 
+  gli operatori ``is`` o ``is not``, mai con l'operatore di uguaglianza. 
+
+  Inoltre, attenzione a scrivere ``if x`` quando ciò che si intende è 
+  ``if x is not None``; per es., quando si testa se una variabile o un 
+  argomento con default ``None`` è invece impostato a un altro valore. 
+  L'altro valore potrebbe avere un tipo (come un contenitore) che risulta 
+  "falso" in un contesto booleano!
+
+- Usate l'operatore ``is not`` invece di ``not ... is``. Anche se le due 
+  espressioni sono funzionalmente identiche, la prima è più leggibile 
+  e deve essere preferita::
+
+      # Giusto:
+      if foo is not None:
+
+  ::
+
+      # Sbagliato:
+      if not foo is None:
+
+- Quando si implementano le operazioni di *rich comparision*, è 
+  meglio fornire tutti e sei gli operatori (``__eq__``, ``__ne__``,
+  ``__lt__``, ``__le__``, ``__gt__``, ``__ge__``) invece di dare per 
+  scontato che il codice cliente dovrà fare un solo tipo di confronto. 
+
+  Per minimizzare lo sforzo necessario, il decoratore 
+  ``functools.total_ordering()`` fornisce uno strumento per generare 
+  i metodi di confronto mancanti. 
+
+  La PEP 207 stabilisce che le regole di riflessività *valgono* in 
+  Python. Quindi l'interprete potrebbe scambiare ``y > x`` con ``x < y``, 
+  ``y >= x`` con ``x <= y``, e potrebbe scambiare gli argomenti di 
+  ``x == y`` e ``x !=  y``.  Le operazioni ``sort()`` e ``min()`` 
+  garantiscono l'uso dell'operatore ``<`` e la funzione ``max()`` usa 
+  l'operatore ``>``. È meglio comunque implementare tutte e sei le 
+  operazioni, così da non generare confusione in altri contesti. 
+
+- Usate sempre un'istruzione ``def`` invece di un assegnamento che lega 
+  un'espressione lambda direttamente a un identificatore::
+
+      # Giusto:
+      def f(x): return 2*x
+
+  ::
+
+      # Sbagliato:
+      f = lambda x: 2*x
+
+  Nel primo caso, il nome dell'oggetto-funzione risultante è 
+  specificamente "f" invece di un generico "<lambda>", cosa più utile 
+  nei traceback e nelle rappresentazioni in formato stringa in generale. 
+  Usare un assegnamento cancella l'unico beneficio di una lambda 
+  rispetto a una definizione esplicita di funzione (ovvero, che può 
+  essere inserita dentro un'espressione più lunga).
+
+- Le eccezioni devono derivare da ``Exception`` e non da ``BaseException``. 
+  Derivare direttamente da ``BaseException`` deve essere limitato a quelle 
+  eccezioni che quasi sempre è sbagliato intercettare. 
+
+  Progettate le gerarchie delle eccezioni sulla base delle probabili 
+  necessità del codice che le *intercetta*, invece che dei luoghi da dove 
+  queste vengono emesse. Cercate di rispondere programmaticamente alla 
+  domanda "che cosa è andato storto?", invece di limitarvi ad affermare 
+  che "è successo un problema" (si veda la PEP 3151 per un esempio di 
+  come abbiamo imparato questa lezione nella gerarchia delle eccezioni 
+  builtin). 
+
+  Si applicano qui le convenzioni per i nomi delle classi; inoltre 
+  occorre sempre aggiungere il suffisso "Error" al nome dell'eccezione, 
+  se questa è un errore. Le eccezioni che non sono errori si usano per 
+  il controllo di flusso non-locale e altre forme di segnali, e non 
+  hanno bisogno di un suffisso speciale. 
+
+- Usate il concatenamento di eccezioni in modo appropriato. 
+  ``raise X from Y`` si dovrebbe usare per indicare un rimpiazzamento 
+  esplicito, senza perdere il traceback originale. 
+
+  Quando rimpiazzate deliberatamente un'eccezione interna (usando 
+  ``raise X from None``), assicuratevi di trasferire i dettagli 
+  rilevanti alla nuova eccezione (per esempio, preservando il nome 
+  dell'attributo quando convertite un KeyError in AttributeError, 
+  o incorporando il testo dell'eccezione originaria nel messaggio 
+  di quella nuova).
+
+- Quando intercettate, elencate le specifiche eccezioni quando possibile, 
+  invece di usare un ``except:`` "nudo"::
+
+      try:
+          import platform_specific_module
+      except ImportError:
+          platform_specific_module = None
+
+  Un ``except:`` "nudo" intercetta anche le eccezioni di ``SystemExit`` 
+  e ``KeyboardInterrupt``, rendendo più difficile interrompere un 
+  programma con Control-C, e può mascherare altri problemi. Se volete 
+  intercettare tutte le eccezioni che sono dovute a un errore nel 
+  programma, usate ``except Exception:`` (un ``except:`` "nudo" 
+  equivale invece a ``except BaseException:``).
+
+  Una buona regola orientativa è limitare l'uso degli ``except:`` "nudi" 
+  a due soli casi:
+
+  1. Se il gestore dell'eccezione stampa il traceback o lo scrive in un 
+     log. Almeno così l'utente sarà consapevole che si è verificato un 
+     errore.
+
+  2. Se il codice deve fare qualche lavoro di pulizia, ma poi lascia 
+     che l'eccezione si propaghi con un ``raise``.  Ma ``try...finally``
+     può essere un modo migliore per gestire questo caso. 
+
+- Quando intercettate errori che vengono dal sistema operativo, è meglio 
+  usare la gerarchia esplicita introdotta da Python 3.3, piuttosto che 
+  l'introspezione dei valori ``errno``.
+
+- Inoltre, per tutti blocchi try/except, limitate il blocco ``try`` al 
+  minimo necessario di codice. Di nuovo, è questione di non mascherare 
+  altri bachi::
+
+      # Giusto:
+      try:
+          value = collection[key]
+      except KeyError:
+          return key_not_found(key)
+      else:
+          return handle_value(value)
+
+  ::
+
+      # Sbagliato:
+      try:
+          # Troppo generico!
+          return handle_value(collection[key])
+      except KeyError:
+          # Intercetta anche un KeyError emesso da handle_value()
+          return key_not_found(key)
+
+- Se una risorsa è locale a una sezione particolare di codice, usate 
+  l'istruzione ``with`` per garantirne la chiusura veloce e pulita 
+  dopo l'uso. Può andar bene anche un blocco try/finally.
+
+- I *context manager* vanno invocati attraverso metodi o funzioni separate 
+  ogni volta che fanno qualcosa che non sia acquisire e liberare risorse::
+
+      # Giusto:
+      with conn.begin_transaction():
+          do_stuff_in_transaction(conn)
+
+  ::
+
+      # Sbagliato:
+      with conn:
+          do_stuff_in_transaction(conn)
+
+  Il secondo esempio non fornisce nessuna indicazione che i metodi 
+  ``__enter__`` e ``__exit__`` stanno facendo anche qualcos'altro, 
+  oltre che chiudere la connessione dopo una transazione. In questi 
+  casi è importante essere espliciti. 
+
+- Siate consistenti con le istruzioni ``return``. O tutte le istruzioni 
+  ``return`` di una funzione restituiscono un valore, oppure nessuna 
+  di esse. Se un qualsiasi ``return`` restituisce qualcosa, allora 
+  tutti i ``return`` senza valore di ritorno esplicito dovrebbero 
+  specificarlo con ``return None``, e un ``return`` esplicito dovrebbe 
+  essere presente alla fine della funzione (se raggiungibile)::
+
+      # Giusto:
+
+      def foo(x):
+          if x >= 0:
+              return math.sqrt(x)
+          else:
+              return None
+
+      def bar(x):
+          if x < 0:
+              return None
+          return math.sqrt(x)
+
+  ::
+
+      # Sbagliato:
+
+      def foo(x):
+          if x >= 0:
+              return math.sqrt(x)
+
+      def bar(x):
+          if x < 0:
+              return
+          return math.sqrt(x)
+
+- Usate ``''.startswith()`` e ``''.endswith()`` invece del sezionamento 
+  di stringa per cercare prefissi e suffissi. 
+
+  ``startswith`` e ``endswith`` sono più chiari e meno soggetti a errore::
+
+      # Giusto:
+      if foo.startswith('bar'):
+
+  ::
+
+      # Sbagliato:
+      if foo[:3] == 'bar':
+
+- Usate sempre ``isinstance()`` per i confronti tra tipi di oggetti, 
+  invece di confrontare i tipi direttamente::
+
+      # Giusto:
+      if isinstance(obj, int):
+
+  ::
+
+      # Sbagliato:
+      if type(obj) is type(1):
+
+- Per le sequenze (stringhe, liste, tuple), usate il fatto che una 
+  sequenza vuota è "falsa"::
+
+      # Giusto:
+      if not seq:
+      if seq:
+
+  ::
+
+      # Sbagliato:
+      if len(seq):
+      if not len(seq):
+
+- Non scrivete valori letterali di stringa che hanno degli spazi 
+  significativi a fondo riga. Questi spazi non sono distinguibili 
+  otticamente e certi editor (e più recentemente, reindent.py) li 
+  tagliano via. 
+
+- Non confrontate valori booleani a ``True`` o ``False`` usando ``==``::
+
+      # Giusto:
+      if greeting:
+
+  ::
+
+      # Sbagliato:
+      if greeting == True:
+
+  Peggio ancora::
+
+      # Sbagliato:
+      if greeting is True:
+
+- È sconsigliato l'uso delle istruzioni per il controllo di flusso 
+  ``return``/``break``/``continue`` dentro il blocco ``finally`` di un 
+  ``try...finally``, se l'istruzione salterebbe fuori dal blocco. 
+  Ciò perché queste istruzioni cancellerebbero implicitamente qualunque 
+  eccezione attiva che si sta propagando attraverso il blocco ``finally``:: 
+
+      # Sbagliato:
+      def foo():
+          try:
+              1 / 0
+          finally:
+              return 42
+
+.. _function_annotations:
+
+Annotazioni di funzione
+^^^^^^^^^^^^^^^^^^^^^^^
+
+Con l'entrata in vigore della PEP 484, sono cambiate le regole di stile 
+per l'annotazione delle funzioni. 
+
+- Le annotazioni dovrebbero usare la sintassi della PEP 484 (ci sono 
+  anche alcune raccomandazioni di formattazione nella sezione precedente).
+
+- La sperimentazione con gli stili delle annotazioni, consigliata in 
+  precedenza da questa PEP, non è più raccomandata.
+
+- Tuttavia, al di fuori della libreria standard, sono adesso incoraggiati 
+  esperimenti che rientrino nelle regole della PEP 484. Per esempio, 
+  annotare con lo stile della PEP 484 una vasta libreria o applicazione 
+  di terze parti, valutare quanto è stato semplice aggiungere queste 
+  annotazioni e capire se la loro presenza aumenta la comprensibilità 
+  del codice. 
+
+- La libreria standard di Python dovrebbe essere conservativa 
+  nell'adottare queste annotazioni, ma il loro uso è permesso per il 
+  codice nuovo e per grandi *refactoring*. 
+
+- Il codice che vuole fare un uso differente delle annotazioni di 
+  funzione dovrebbe inserire un commento nella forma ::
+
+      # type: ignore
+
+  più o meno all'inizio del file; questo dirà ai *type checker* di 
+  ignorare tutte le annotazioni. (La PEP 484 riporta dei metodi più 
+  selettivi per disabilitare gli avvisi dei *type checker*.)
+
+- Così come i *linter*, i *type checker* sono strumenti separati, 
+  opzionali. Gli interpreti Python di default non dovrebbero emettere 
+  nessun messaggio di *type checking*, e non dovrebbero alterare il 
+  loro comportamento a seconda delle annotazioni. 
+
+- Gli utenti che non vogliono usare i *type checker* sono liberi di 
+  ignorarli. Tuttavia, ci si deve aspettare che l'utente di una 
+  libreria esterna possa voler usare un *type checker* su questi 
+  package. A questo scopo, la PEP 484 raccomanda l'uso di file *stub* 
+  ``.pyi``, che saranno letti dal *type checker* invece dei 
+  corrispondenti file ``.py``. Questi *stub* possono essere distribuiti 
+  insieme alla libreria, o separatamente (col permesso dell'autore 
+  della libreria) attraverso Typeshed [5]_.
+
+Annotazione di variabili
+^^^^^^^^^^^^^^^^^^^^^^^^
+
+La PEP 526 ha introdotto l'annotazione delle variabili. Per il loro 
+stile, le raccomandazioni sono simili a quelle per le annotazioni di 
+funzione sopra descritte: 
+
+- Le annotazioni per variabili a livello di modulo, classe e istanza 
+  dovrebbero avere un singolo spazio dopo il due-punti. 
+
+- Nessuno spazio prima del due-punti.
+
+- Se un assegnamento ha una parte destra, il segno ``=`` deve avere 
+  esattamente uno spazio da entrambe le parti::
+
+      # Giusto:
+
+      code: int
+
+      class Point:
+          coords: Tuple[int, int]
+          label: str = '<unknown>'
+
+  ::
+
+      # Sbagliato:
+
+      code:int  # Niente spazio dopo il due-punti
+      code : int  # Spazio prima del due-punti
+
+      class Test:
+          result: int=0  # Niente spazio intorno al segno uguale
+
+- Anche se la PEP 526 è in vigore da Python 3.6, la sua sintassi per 
+  le annotazioni di variabili è quella da preferirsi per i file *stub* 
+  in tutte le versioni di Python (si veda la PEP 484 per i dettagli). 
+
+.. rubric:: Note
+
+.. [#fn-hi] Il *rientro sporgente* è un elemento tipografico in cui 
+   tutte le righe di un paragrafo sono rientrate eccetto la prima. 
+   Nel contesto di Python, si usa il termine per descrivere lo stile 
+   in cui la parentesi aperta di un'istruzione con parentesi è 
+   l'ultimo carattere della riga, con le righe successive rientrate 
+   fino a quando non si chiude la parentesi. 
+
+Riferimenti
+-----------
+
+.. [1] PEP 7, Guida di stile per il codice C, van Rossum
+
+.. [2] La guida di stile per GNU Mailman di Barry Warsaw
+       http://barry.warsaw.us/software/STYLEGUIDE.txt
+
+.. [3] Donald Knuth, *The TeXBook*, pag. 195 e 196.
+
+.. [4] http://www.wikipedia.com/wiki/CamelCase
+
+.. [5] La repository di Typeshed 
+       https://github.com/python/typeshed
+
+Copyright
+---------
+
+Questo documento è di pubblico dominio.
