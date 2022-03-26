@@ -3,7 +3,7 @@ Guida di stile per il codice Python (PEP 8)
 
 - Autore: Guido van Rossum, Barry Warsaw, Nick Coghlan
 - Data di creazione: 5 luglio 2001
-- Traduzione aggiornata al: `2 settembre 2021 <https://github.com/python/peps/commits/main/pep-0008.txt>`_
+- Traduzione aggiornata al: `25 gennaio 2022 <https://github.com/python/peps/commits/main/pep-0008.txt>`_
 
 Introduzione
 ------------
@@ -222,8 +222,8 @@ le espressioni tra parentesi. Questo metodo è preferibile all'uso
 della barra rovesciata per la continuazione di riga. 
 
 La barra rovesciata torna comunque utile, talvolta. Per esempio, una 
-istruzione ``with`` lunga non può usare la continuazione implicita, 
-quindi la barra rovesciata è accettabile::
+istruzione ``with`` lunga non poteva usare la continuazione implicita, 
+prima di Python 3.10, quindi la barra rovesciata era accettabile::
 
     with open('/path/to/some/file/you/want/to/read') as file_1, \
          open('/path/to/some/file/being/written', 'w') as file_2:
@@ -465,12 +465,12 @@ Evitate spazi spuri in queste situazioni:
 - Subito prima di una virgola, punto e virgola, due punti::
 
       # Giusto:
-      if x == 4: print x, y; x, y = y, x
+      if x == 4: print(x, y); x, y = y, x
 
   ::
 
       # Sbagliato:
-      if x == 4 : print x , y ; x , y = y , x
+      if x == 4 : print(x , y) ; x , y = y , x
 
 - Tuttavia, nella notazione per il sezionamento, il due-punti conta 
   come un operatore binario e dovrebbe avere lo stesso spazio da 
