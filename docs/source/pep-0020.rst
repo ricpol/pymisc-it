@@ -3,7 +3,7 @@ Lo Zen di Python (PEP 20)
 
 - Autore: Tim Peters
 - Data di creazione: 19 agosto 2004
-- Traduzione aggiornata al: `21 febbraio 2020 <https://github.com/python/peps/commits/main/pep-0020.txt>`_
+- Traduzione aggiornata al: `15 marzo 2022 <https://github.com/python/peps/commits/main/pep-0020.txt>`_
 
 Abstract
 --------
@@ -15,7 +15,7 @@ ispiratori del BDFL per il design di Python in 20 aforismi, solo
 Lo Zen di Python
 ----------------
 
-.. code-block:: none
+.. code-block:: text
 
     Bello è meglio di brutto.
     Esplicito è meglio di implicito. 
@@ -48,9 +48,9 @@ Sorpresa
 Riferimenti
 -----------
 
-* Pubblicato per la prima volta su comp.lang.python/python-list@python.org 
-  in un thread dal titolo "La Via di Python" 
-  https://groups.google.com/d/msg/comp.lang.python/B_VxeTBClM0/L8W9KlsiriUJ
+Pubblicato per la prima volta su comp.lang.python/python-list@python.org 
+in un thread dal titolo `"La Via di Python" 
+<https://groups.google.com/d/msg/comp.lang.python/B_VxeTBClM0/L8W9KlsiriUJ>`__
 
 
 Copyright
