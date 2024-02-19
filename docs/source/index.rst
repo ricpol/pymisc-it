@@ -5,8 +5,11 @@ Questa è una raccolta di documenti tradotti, che non sono compresi nella
 `documentazione canonica di Python <https://docs.python.org>`_, ma che 
 sono comunque molto importanti. 
 
+Nota: è inoltre disponibile separatamente la traduzione italiana del 
+`Tutorial ufficiale di Python <https://pytutorial-it.readthedocs.io>`_.
+
 Traduzione a cura di Riccardo Polignieri. 
-Copyright 2022 - tutti i diritti riservati.
+Copyright 2024 - tutti i diritti riservati.
 
 .. toctree::
    :maxdepth: 1
