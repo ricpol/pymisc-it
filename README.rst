@@ -12,10 +12,9 @@ Potete leggere la traduzione, in formato Html, Pdf o Epub, su ReadTheDocs: https
 
 La traduzione è mantenuta in sicrono con gli aggiornamenti e le correzioni apportate agli originali. 
 
-Non perdete la traduzione del Tutorial ufficiale di Python, `dispobibile separatamente < https://pytutorial-it.readthedocs.io>`_.
+Non perdete la traduzione del Tutorial ufficiale di Python, 
+`disponibile separatamente <https://pytutorial-it.readthedocs.io>`_.
 
-
-____________________
 Copyright dell'originale: 2001-2024 Python Software Foundation. All rights reserved.
 
 Copyright della traduzione: 2024 Riccardo Polignieri. Tutti i diritti riservati.
