@@ -3,7 +3,7 @@ Guida di stile per il codice Python (PEP 8)
 
 - Autore: Guido van Rossum, Barry Warsaw, Nick Coghlan
 - Data di creazione: 5 luglio 2001
-- Traduzione aggiornata al: `25 gennaio 2022 <https://github.com/python/peps/commits/main/pep-0008.txt>`_
+- Traduzione aggiornata al: `9 settembre 2023 <https://github.com/python/peps/commits/main/pep-0008.txt>`_
 
 Introduzione
 ------------
@@ -491,7 +491,7 @@ Evitate spazi spuri in queste situazioni:
       # Sbagliato:
       ham[lower + offset:upper + offset]
       ham[1: 9], ham[1 :9], ham[1:9 :3]
-      ham[lower : : upper]
+      ham[lower : : step]
       ham[ : upper]
 
 - Subito prima della parentesi aperta che introduce la lista degli 
@@ -707,7 +707,7 @@ con la minuscola (mai alterare come è scritto un identificatore!).
 I blocchi di commento di solito sono costituiti da uno o più paragrafi 
 di frasi complete, con ciascuna frase che termina con un punto. 
 
-Dovreste usare due spazi dopo un punto di fine frase in un commento 
+Dovreste usare uno o due spazi dopo un punto di fine frase in un commento 
 che ha più di una frase, tranne che dopo la frase finale. 
 
 Assicuratevi che i vostri commenti siano chiari e facilmente comprensibili 
