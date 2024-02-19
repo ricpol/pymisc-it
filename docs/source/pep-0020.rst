@@ -3,7 +3,7 @@ Lo Zen di Python (PEP 20)
 
 - Autore: Tim Peters
 - Data di creazione: 19 agosto 2004
-- Traduzione aggiornata al: `15 marzo 2022 <https://github.com/python/peps/commits/main/pep-0020.txt>`_
+- Traduzione aggiornata al: `9 settembre 2023 <https://github.com/python/peps/commits/main/pep-0020.txt>`_
 
 Abstract
 --------
